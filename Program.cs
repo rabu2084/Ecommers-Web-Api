@@ -1,41 +1,46 @@
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-
 var app = builder.Build();
-
 app.UseSwagger();
 app.UseSwaggerUI();
-
 app.UseHttpsRedirection();
 
 //Rest api==> GET, POST, PUT, DELETE(HHTP verbs)
-app.MapPut("/",() =>
-{
-    return "Default Method: hello";
-});
 
+
+
+
+//json object response
+app.MapGet("/hello",() =>
+{
+    var responsen = new
+    {
+        message = "this is a json object",
+        success = true
+    };
+
+    return responsen;
+});
 
 app.MapGet("/hello",() =>
 {
-    return "Get Method: hello";
+    return Results.Content("<h1>Hello World</h1>", "text/html");//200
 });
 
-app.MapPut("/hello",() =>
+var products = new List<Product>(){
+new Product("samsung",1250),
+new Product("apple",1350),   
+};
+
+app.MapGet("/products", () =>
 {
-    return "Put Method: hello";
+    return Results. Ok(products);
+
 });
-
-app.MapDelete("/hello",() =>
-{
-    return "Delete Method: hello";
-});
-
-
 
 app.Run();
+public record Product(String Name , decimal Price);
 
 
 

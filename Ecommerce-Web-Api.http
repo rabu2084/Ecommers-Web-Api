@@ -1,5 +1,13 @@
 
-GET http://localhost:5027/products
+GET http://localhost:5027/api/categories
 
 ###
-PUT http://localhost:5027/hello
+POST http://localhost:5027/api/categories
+
+
+###
+Delete http://localhost:5027/api/categories
+
+
+###
+PUT  http://localhost:5027/api/categories

@@ -6,41 +6,75 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
-//Rest api==> GET, POST, PUT, DELETE(HHTP verbs)
 
-
-
-
-//json object response
-app.MapGet("/hello",() =>
+//Get request at- /api/categories => Read Category
+List<Category> categories = new List<Category>();
+app.MapGet("/api/categories", () =>
 {
-    var responsen = new
+    return Results.Ok(categories);
+});
+
+//Post request at- /api/categories => Create Category
+app.MapPost("/api/categories", () =>
+{
+    var newCategory = new Category
     {
-        message = "this is a json object",
-        success = true
+       CategoryId = Guid.NewGuid(),
+        Name = "Electronics",
+        Description = "computer, phone , laptop etc",
+        CreatedAt = DateTime.UtcNow,
     };
-
-    return responsen;
+    categories.Add(newCategory);
+    
+    return Results.Created($"/api/categories/{newCategory.CategoryId}", newCategory);   
 });
 
-app.MapGet("/hello",() =>
+
+//Delete request at- /api/categories => Delete a Category
+app.MapDelete("/api/categories/", () =>
 {
-    return Results.Content("<h1>Hello World</h1>", "text/html");//200
+
+    var foundCategory = categories.FirstOrDefault(category => category.CategoryId == Guid.Parse("0728a615-8878-43ef-af7b-2ecb3ec2a43c"));
+
+    if (foundCategory == null)
+    {
+        return Results.NotFound("category with this id not found");
+    }
+    return Results.NoContent();
 });
 
-var products = new List<Product>(){
-new Product("samsung",1250),
-new Product("apple",1350),   
-};
-
-app.MapGet("/products", () =>
+//Put request at- /api/categories => Update a Category
+app.MapPut("/api/categories/", () =>
 {
-    return Results. Ok(products);
 
+    var foundCategory = categories.FirstOrDefault(category => category.CategoryId == Guid.Parse("0728a615-8878-43ef-af7b-2ecb3ec2a43c"));
+
+    if (foundCategory == null)
+    {
+        return Results.NotFound("category with this id not found");
+    }
+    foundCategory.Name = "Updated Category Name";
+    foundCategory.Description = "Updated Category Description";
+    return Results.NoContent();
 });
+
+
+
+
+
+
+
 
 app.Run();
-public record Product(String Name , decimal Price);
+
+public record Category
+{
+public Guid CategoryId { get; set; }
+public string? Name { get; set; }
+public string? Description { get; set; }
+public DateTime CreatedAt{get; set;}
+};
+
 
 
 
